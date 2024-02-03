@@ -5,12 +5,13 @@ void main() {
   runApp(const MyApp());
 }
 
-final List<IconData> weekDays = [
-  Icons.home,
-  Icons.wallet,
-  Icons.heart_broken,
-  Icons.badge,
-  Icons.person,
+final List<AnimatedIconData> weekDays = [
+ AnimatedIcons.home_menu,
+  AnimatedIcons.list_view,
+ AnimatedIcons.pause_play,
+ AnimatedIcons.ellipsis_search,
+ AnimatedIcons.event_add,
+
 ];
 
 final List<String> txt = [
@@ -23,7 +24,7 @@ final List<String> txt = [
 
 ValueNotifier<int> indexChangerNavigator = ValueNotifier<int>(3);
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget  {
   const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -32,13 +33,30 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: const Example(),
+      home: const  Example(),
     );
   }
 }
 
-class Example extends StatelessWidget {
-  const Example({Key? key}) : super(key: key);
+class Example extends StatefulWidget {
+  const  Example({Key? key}) : super(key: key);
+
+  @override
+  State<Example> createState() => _ExampleState();
+}
+  late AnimationController _controller;
+
+
+class _ExampleState extends State<Example>  with SingleTickerProviderStateMixin{
+
+   @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,11 +98,16 @@ class Example extends StatelessWidget {
               itemCount: weekDays.length,
               itemExtent: 70,
               yOffset: 5,
-              scale: 2,
+              scale: 1.5,
               backgroundColor: Colors.white,
               onSelectedItemChanged: (index) {
                 debugPrint(index.toString());
                 indexChangerNavigator.value = index;
+                if (_controller.isCompleted) {
+              _controller.reverse();
+            } else {
+              _controller.forward();
+            }
               },
             ),
           ),
@@ -133,18 +156,25 @@ class BottomIcon extends StatelessWidget {
       child: Card(
         elevation: isCenter ? 10 : 0,
         margin: EdgeInsets.zero,
+        
         color: colorCard,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
+        shape:isCenter
+            ? const CircleBorder()  
+            : RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+              ), 
+        child: Center(
+        child: AnimatedIcon(
+
+          icon: weekDays[index],
+          progress: _controller,
+          color: colorIcon,
+        
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Icon(
-            weekDays[index],
-            color: colorIcon,
-          ),
-        ),
+                ),
       ),
     );
   }
 }
+
+
