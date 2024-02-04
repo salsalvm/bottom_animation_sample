@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:smooth_carousel_slider_widget/smooth_carousel_slider_widget.dart';
 
 void main() {
@@ -75,7 +76,7 @@ class _ExampleState extends State<Example>  with SingleTickerProviderStateMixin{
           ),
         ),
         body: SafeArea(
-          child: Builder(builder: (BuildContext context) =>  BodyPart(txt: txt[indexChangerNavigator.value],)),
+          child: Builder(builder: (BuildContext context) =>BodyPart(txt: txt[indexChangerNavigator.value],)),
         ),
         bottomNavigationBar: Container(
           height: 80,
@@ -100,11 +101,14 @@ class _ExampleState extends State<Example>  with SingleTickerProviderStateMixin{
               yOffset: 5,
               scale: 1.5,
               backgroundColor: Colors.white,
-              onSelectedItemChanged: (index) {
+              onSelectedItemChanged: (index) async{
                 debugPrint(index.toString());
+
+            HapticFeedback.lightImpact();
                 indexChangerNavigator.value = index;
-                if (_controller.isCompleted) {
-              _controller.reverse();
+                
+            if (_controller.isCompleted) {  
+            _controller.reverse();
             } else {
               _controller.forward();
             }
@@ -136,6 +140,9 @@ final String txt;
     );
   }
 }
+
+
+
 
 //!=====================================================================
 class BottomIcon extends StatelessWidget {
